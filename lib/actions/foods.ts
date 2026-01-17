@@ -259,15 +259,15 @@ export async function getDailyLog(userId: string, date?: string) {
   }
 }
 
-export async function addFoodEntry(userId: string, foodIdOrName: string, quantity: number) {
+export async function addFoodEntry(userId: string, foodIdOrName: string, quantity: number, date?: string) {
   try {
-    const date = getTodayDateString();
+    const targetDate = date || getTodayDateString();
 
     // Get or create daily log
     let [log] = await db
       .select()
       .from(dailyLogs)
-      .where(and(eq(dailyLogs.userId, userId), eq(dailyLogs.date, date)))
+      .where(and(eq(dailyLogs.userId, userId), eq(dailyLogs.date, targetDate)))
       .limit(1);
 
     if (!log) {
@@ -300,7 +300,7 @@ export async function addFoodEntry(userId: string, foodIdOrName: string, quantit
     });
 
     // Recalculate and update totals for the day
-    await getDailyLog(userId, date);
+    await getDailyLog(userId, targetDate);
     
     return { success: true };
   } catch (error) {

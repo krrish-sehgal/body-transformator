@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { calculateRecompTargets } from '@/lib/calculations/recomp';
 import { addFoodEntry, deleteFoodEntry } from '@/lib/actions/foods';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { recompConfig } from '@/lib/config';
 import NavigationSidebar from '@/components/dashboard/NavigationSidebar';
 import CalendarModal from '@/components/dashboard/CalendarModal';
@@ -64,6 +64,15 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
     return () => clearInterval(interval);
   }, [clientToday, currentDate, router]);
 
+  // Reset form state when date changes
+  useEffect(() => {
+    setSelectedFood('');
+    setSelectedFoodObj(null);
+    setQuantity('');
+    setSelectedUnit(null);
+    setError('');
+  }, [currentDate]);
+
   // Recalculate targets to show formulas
   const targets = calculateRecompTargets(
     profile.weightKg,
@@ -100,13 +109,16 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
       quantityToStore = parseFloat(quantity); // Already in grams
     }
     
-    const result = await addFoodEntry(userId, selectedFood, quantityToStore);
+    // Get the current date to add entry to
+    const targetDate = currentDateStr;
+    const result = await addFoodEntry(userId, selectedFood, quantityToStore, targetDate);
     
     if (result.success) {
       router.refresh();
       setSelectedFood('');
       setSelectedFoodObj(null);
       setQuantity('');
+      setSelectedUnit(null);
     } else {
       setError(result.error || 'Failed to add food entry. Please try again.');
     }
@@ -132,12 +144,14 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
   const effectiveDeficit = targets.maintenance - expectedIntake;
   const effectiveDeficitPercent = Math.round((effectiveDeficit / targets.maintenance) * 100 * 100) / 100;
 
-  const handleDateSelect = (date: string) => {
+  const handleDateSelect = async (date: string) => {
     if (date === clientToday) {
       router.push('/dashboard');
     } else {
       router.push(`/dashboard?date=${date}`);
     }
+    // Force a hard refresh to ensure data updates
+    await new Promise(resolve => setTimeout(resolve, 100));
     router.refresh();
   };
 
