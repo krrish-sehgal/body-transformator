@@ -147,10 +147,19 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
   const effectiveDeficitPercent = Math.round((effectiveDeficit / targets.maintenance) * 100 * 100) / 100;
 
   const handleDateSelect = async (date: string) => {
-    if (date === clientToday) {
+    // Normalize date to YYYY-MM-DD format
+    let normalizedDate = date;
+    if (normalizedDate.includes('T')) {
+      normalizedDate = normalizedDate.split('T')[0];
+    }
+    if (normalizedDate.length > 10) {
+      normalizedDate = normalizedDate.substring(0, 10);
+    }
+    
+    if (normalizedDate === clientToday) {
       router.push('/dashboard');
     } else {
-      router.push(`/dashboard?date=${date}`);
+      router.push(`/dashboard?date=${normalizedDate}`);
     }
     // Force a hard refresh to ensure data updates
     await new Promise(resolve => setTimeout(resolve, 100));

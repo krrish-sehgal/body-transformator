@@ -81,7 +81,15 @@ export async function getAllFoods(userId?: string) {
 
 export async function getDailyLog(userId: string, date?: string) {
   try {
-    const targetDate = date || getTodayDateString();
+    // Normalize date format to ensure YYYY-MM-DD
+    let targetDate = date || getTodayDateString();
+    // Ensure date is in correct format (remove any time component if present)
+    if (targetDate.includes('T')) {
+      targetDate = targetDate.split('T')[0];
+    }
+    if (targetDate.length > 10) {
+      targetDate = targetDate.substring(0, 10);
+    }
     
     const [log] = await db
       .select()
@@ -261,7 +269,15 @@ export async function getDailyLog(userId: string, date?: string) {
 
 export async function addFoodEntry(userId: string, foodIdOrName: string, quantity: number, date?: string) {
   try {
-    const targetDate = date || getTodayDateString();
+    // Normalize date format to ensure YYYY-MM-DD
+    let targetDate = date || getTodayDateString();
+    // Ensure date is in correct format (remove any time component if present)
+    if (targetDate.includes('T')) {
+      targetDate = targetDate.split('T')[0];
+    }
+    if (targetDate.length > 10) {
+      targetDate = targetDate.substring(0, 10);
+    }
 
     // Get or create daily log
     let [log] = await db

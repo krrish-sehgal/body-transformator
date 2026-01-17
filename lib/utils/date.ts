@@ -12,9 +12,15 @@ export function formatDateForDB(date: Date | string): string {
 
 /**
  * Get today's date as YYYY-MM-DD
+ * Uses local timezone to ensure consistency
  */
 export function getTodayDateString(): string {
-  return formatDateForDB(new Date());
+  const now = new Date();
+  // Use local timezone to avoid UTC issues
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 }
 
 /**
