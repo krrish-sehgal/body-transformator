@@ -4,6 +4,9 @@ import './globals.css';
 export const metadata: Metadata = {
   title: 'Body Recomposition Tracker',
   description: 'Track your body recomposition journey',
+  icons: {
+    icon: '/icon.svg',
+  },
 };
 
 export default function RootLayout({
