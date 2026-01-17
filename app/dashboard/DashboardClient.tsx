@@ -369,6 +369,34 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
                     <div className="font-medium text-gray-900 text-base mb-1">{entry.food.name}</div>
                     <div className="text-sm text-gray-600">
                       {(() => {
+                        // Special handling for Oil - can be tsp or tbsp
+                        if (entry.food.name === 'Oil (any)') {
+                          // Determine if it was tbsp (15g) or tsp (5g) based on quantity
+                          // If divisible by 15 and >= 15, prefer tbsp; otherwise tsp
+                          const isTbsp = entry.quantity >= 15 && entry.quantity % 15 === 0;
+                          const isTsp = entry.quantity < 15 || (entry.quantity % 15 !== 0 && entry.quantity % 5 === 0);
+                          
+                          let unit: 'tsp' | 'tbsp';
+                          let unitSize: number;
+                          let units: number;
+                          
+                          if (isTbsp) {
+                            unit = 'tbsp';
+                            unitSize = 15;
+                            units = entry.quantity / 15;
+                          } else {
+                            unit = 'tsp';
+                            unitSize = 5;
+                            units = entry.quantity / 5;
+                          }
+                          
+                          const calories = (entry.food.caloriesPer100g || 0) * (entry.quantity / 100);
+                          const protein = (entry.food.proteinPer100g || 0) * (entry.quantity / 100);
+                          const carbs = (entry.food.carbsPer100g || 0) * (entry.quantity / 100);
+                          const fats = (entry.food.fatsPer100g || 0) * (entry.quantity / 100);
+                          return `${units.toFixed(1)} ${unit}(s) • ${Math.round(calories)} cal • P: ${protein.toFixed(1)}g • C: ${carbs.toFixed(1)}g • F: ${fats.toFixed(1)}g`;
+                        }
+                        
                         // If piece-based food, use per-piece calculation (quantity IS piece count)
                         if (entry.food.unit === 'piece' && entry.food.caloriesPerPiece) {
                           const pieces = entry.quantity; // Quantity IS piece count
