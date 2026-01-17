@@ -434,9 +434,12 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
                           return `${pieces} ${entry.food.unit}(s) • ${Math.round(calories)} cal • P: ${protein.toFixed(1)}g • C: ${carbs.toFixed(1)}g • F: ${fats.toFixed(1)}g`;
                         }
                         
-                        // Priority 3: For other non-gram units without unitSize (shouldn't happen, but fallback to grams)
-                        if (entry.food.unit !== 'g' && !entry.food.unitSize) {
-                          // If no unitSize, treat as grams (fallback)
+                        // Priority 3: For other non-gram units without unitSize (shouldn't happen, but fallback)
+                        // This handles cases where custom food was created with unit but no unitSize
+                        if (entry.food.unit !== 'g' && !entry.food.unitSize && !entry.food.caloriesPerPiece) {
+                          // If no unitSize and no per-piece values, treat as grams (fallback)
+                          // This is a data issue - the food should have unitSize set
+                          console.warn(`Food "${entry.food.name}" has unit "${entry.food.unit}" but no unitSize. Please update the food to include unitSize.`);
                           const calories = (entry.food.caloriesPer100g || 0) * (entry.quantity / 100);
                           const protein = (entry.food.proteinPer100g || 0) * (entry.quantity / 100);
                           const carbs = (entry.food.carbsPer100g || 0) * (entry.quantity / 100);
