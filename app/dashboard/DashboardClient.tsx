@@ -156,13 +156,14 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
       normalizedDate = normalizedDate.substring(0, 10);
     }
     
+    // Use router.push with replace to ensure URL updates immediately
     if (normalizedDate === clientToday) {
-      router.push('/dashboard');
+      router.push('/dashboard', { scroll: false });
     } else {
-      router.push(`/dashboard?date=${normalizedDate}`);
+      router.push(`/dashboard?date=${normalizedDate}`, { scroll: false });
     }
-    // Force a hard refresh to ensure data updates
-    await new Promise(resolve => setTimeout(resolve, 100));
+    // Small delay to ensure URL is updated, then refresh
+    await new Promise(resolve => setTimeout(resolve, 50));
     router.refresh();
   };
 

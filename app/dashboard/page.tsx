@@ -24,7 +24,16 @@ export default async function DashboardPage({
 
   // Get the date from query params or use today
   const params = await searchParams;
-  const date = params.date;
+  let date = params.date;
+  // Normalize date format to ensure YYYY-MM-DD
+  if (date) {
+    if (date.includes('T')) {
+      date = date.split('T')[0];
+    }
+    if (date.length > 10) {
+      date = date.substring(0, 10);
+    }
+  }
   const dailyLog = await getDailyLog(userId, date);
   const foods = await getAllFoods(userId);
   const allDailyLogs = await getAllDailyLogs(userId);
