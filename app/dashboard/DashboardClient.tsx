@@ -64,14 +64,16 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
     return () => clearInterval(interval);
   }, [clientToday, currentDate, router]);
 
-  // Reset form state when date changes
+  // Reset form state and refresh data when date changes
   useEffect(() => {
     setSelectedFood('');
     setSelectedFoodObj(null);
     setQuantity('');
     setSelectedUnit(null);
     setError('');
-  }, [currentDate]);
+    // Force router refresh to get new data for the selected date
+    router.refresh();
+  }, [currentDate, router]);
 
   // Recalculate targets to show formulas
   const targets = calculateRecompTargets(
