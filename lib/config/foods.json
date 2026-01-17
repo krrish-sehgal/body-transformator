@@ -146,6 +146,16 @@
     "notes": "1 tsp oil = 45 kcal, 5g fat (15g per tbsp)"
   },
   {
+    "name": "Veeba Salsa Dip",
+    "caloriesPer100g": 140,
+    "proteinPer100g": 2,
+    "carbsPer100g": 33.3,
+    "fatsPer100g": 0,
+    "unit": "tbsp",
+    "unitSize": 15,
+    "notes": "Per 1 tbsp (~15g): ~21 kcal, ~5g carbs, ~0.3g protein, ~0g fat"
+  },
+  {
     "name": "Fruit (medium)",
     "caloriesPer100g": 50,
     "proteinPer100g": 0.5,
