@@ -133,7 +133,7 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
   const effectiveDeficitPercent = Math.round((effectiveDeficit / targets.maintenance) * 100 * 100) / 100;
 
   const handleDateSelect = (date: string) => {
-    if (date === format(new Date(), 'yyyy-MM-dd')) {
+    if (date === clientToday) {
       router.push('/dashboard');
     } else {
       router.push(`/dashboard?date=${date}`);
