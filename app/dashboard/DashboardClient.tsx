@@ -369,14 +369,15 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
                     <div className="font-medium text-gray-900 text-base mb-1">{entry.food.name}</div>
                     <div className="text-sm text-gray-600">
                       {(() => {
-                        // Debug: Log entry data if unitSize is missing
-                        if (entry.food.unit !== 'g' && !entry.food.unitSize && entry.food.name !== 'Oil (any)') {
-                          console.log('Food entry debug:', {
+                        // Debug: Log entry data if unitSize is missing (only in development)
+                        if (process.env.NODE_ENV === 'development' && entry.food.unit !== 'g' && !entry.food.unitSize && entry.food.name !== 'Oil (any)' && !entry.food.caloriesPerPiece) {
+                          console.log('Food entry debug - missing unitSize:', {
                             name: entry.food.name,
                             unit: entry.food.unit,
                             unitSize: entry.food.unitSize,
                             quantity: entry.quantity,
-                            hasCaloriesPerPiece: !!entry.food.caloriesPerPiece
+                            hasCaloriesPerPiece: !!entry.food.caloriesPerPiece,
+                            foodObject: entry.food
                           });
                         }
                         
