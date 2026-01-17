@@ -59,15 +59,16 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
     
     // Convert quantity to grams based on unit
     let quantityToStore: number;
-    if (selectedFoodObj.unit === 'piece') {
-      quantityToStore = parseFloat(quantity); // Store piece count directly (for eggs, cookies, etc.)
-    } else if (selectedFoodObj.name === 'Oil (any)') {
+    if (selectedFoodObj.name === 'Oil (any)') {
       // Special handling for oil - use selected unit (tsp or tbsp)
       // 1 tsp = 5g, 1 tbsp = 15g
       const unitSize = selectedUnit === 'tbsp' ? 15 : 5;
       quantityToStore = parseFloat(quantity) * unitSize;
-    } else if (selectedFoodObj.unit !== 'g' && selectedFoodObj.unitSize) {
-      // For tsp, tbsp, slice, etc. - convert to grams using unitSize
+    } else if (selectedFoodObj.unit === 'piece' && selectedFoodObj.caloriesPerPiece && !selectedFoodObj.unitSize) {
+      // Piece-based foods with per-piece values (eggs, cookies, roti) - store piece count directly
+      quantityToStore = parseFloat(quantity);
+    } else if (selectedFoodObj.unitSize && selectedFoodObj.unit !== 'g') {
+      // For foods with unitSize (tsp, tbsp, slice, piece with unitSize, etc.) - convert to grams
       quantityToStore = parseFloat(quantity) * selectedFoodObj.unitSize;
     } else {
       quantityToStore = parseFloat(quantity); // Already in grams
