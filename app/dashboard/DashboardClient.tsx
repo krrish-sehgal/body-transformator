@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { calculateRecompTargets } from '@/lib/calculations/recomp';
 import { addFoodEntry, deleteFoodEntry } from '@/lib/actions/foods';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { recompConfig } from '@/lib/config';
 import NavigationSidebar from '@/components/dashboard/NavigationSidebar';
 import CalendarModal from '@/components/dashboard/CalendarModal';

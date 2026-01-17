@@ -273,7 +273,7 @@ export async function addFoodEntry(userId: string, foodIdOrName: string, quantit
     if (!log) {
       [log] = await db
         .insert(dailyLogs)
-        .values({ userId, date })
+        .values({ userId, date: targetDate })
         .returning();
     }
 
