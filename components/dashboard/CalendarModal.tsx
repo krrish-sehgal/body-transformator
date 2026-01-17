@@ -144,8 +144,8 @@ export default function CalendarModal({ isOpen, onClose, dailyLogs, currentDate,
                   className={`
                     p-2 rounded text-sm transition-all relative
                     ${!isCurrentMonth ? 'text-gray-300 cursor-not-allowed' : 'cursor-pointer'}
-                    ${isToday(date) ? 'ring-2 ring-blue-500' : ''}
-                    ${isSelected(date) ? 'ring-2 ring-purple-500 font-bold' : ''}
+                    ${isToday(date) ? 'ring-2 ring-blue-500 font-bold bg-blue-50' : ''}
+                    ${isSelected(date) && !isToday(date) ? 'ring-2 ring-purple-500 font-bold' : ''}
                     ${isCurrentMonth ? getDayColor(date) : 'bg-transparent'}
                   `}
                   title={log ? `${log.totalCalories || 0} cal, ${log.totalProtein || 0}g protein` : 'No data'}
