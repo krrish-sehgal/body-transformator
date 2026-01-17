@@ -193,11 +193,11 @@ export async function getDailyLog(userId: string, date?: string) {
           carbsPer100g: food.carbsPer100g || 0,
           fatsPer100g: food.fatsPer100g || 0,
           unit: food.unit,
-          unitSize: food.unitSize,
-          caloriesPerPiece: food.caloriesPerPiece,
-          proteinPerPiece: food.proteinPerPiece,
-          carbsPerPiece: food.carbsPerPiece,
-          fatsPerPiece: food.fatsPerPiece,
+          unitSize: food.unitSize || undefined, // Preserve unitSize even if it's null in DB
+          caloriesPerPiece: food.caloriesPerPiece || undefined,
+          proteinPerPiece: food.proteinPerPiece || undefined,
+          carbsPerPiece: food.carbsPerPiece || undefined,
+          fatsPerPiece: food.fatsPerPiece || undefined,
         },
       };
     });

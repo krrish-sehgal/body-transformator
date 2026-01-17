@@ -400,13 +400,15 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
                         // Priority 1: Foods with unitSize (custom foods, tsp, tbsp, slice, piece with unitSize, etc.)
                         // Convert back from grams to original unit
                         // This takes priority because if unitSize exists, quantity is stored in grams
-                        if (entry.food.unitSize && entry.food.unit !== 'g') {
+                        if (entry.food.unitSize && entry.food.unit !== 'g' && entry.quantity && !isNaN(entry.quantity) && !isNaN(entry.food.unitSize)) {
                           const units = entry.quantity / entry.food.unitSize;
-                          const calories = (entry.food.caloriesPer100g || 0) * (entry.quantity / 100);
-                          const protein = (entry.food.proteinPer100g || 0) * (entry.quantity / 100);
-                          const carbs = (entry.food.carbsPer100g || 0) * (entry.quantity / 100);
-                          const fats = (entry.food.fatsPer100g || 0) * (entry.quantity / 100);
-                          return `${units.toFixed(1)} ${entry.food.unit}(s) • ${Math.round(calories)} cal • P: ${protein.toFixed(1)}g • C: ${carbs.toFixed(1)}g • F: ${fats.toFixed(1)}g`;
+                          if (!isNaN(units) && isFinite(units)) {
+                            const calories = (entry.food.caloriesPer100g || 0) * (entry.quantity / 100);
+                            const protein = (entry.food.proteinPer100g || 0) * (entry.quantity / 100);
+                            const carbs = (entry.food.carbsPer100g || 0) * (entry.quantity / 100);
+                            const fats = (entry.food.fatsPer100g || 0) * (entry.quantity / 100);
+                            return `${units.toFixed(1)} ${entry.food.unit}(s) • ${Math.round(calories)} cal • P: ${protein.toFixed(1)}g • C: ${carbs.toFixed(1)}g • F: ${fats.toFixed(1)}g`;
+                          }
                         }
                         
                         // Priority 2: Piece-based foods with per-piece values (eggs, cookies, roti)
