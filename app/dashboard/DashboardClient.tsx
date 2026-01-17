@@ -175,7 +175,7 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8 gap-4">
           <h1 className="text-3xl sm:text-3xl font-bold text-gray-900">Dashboard</h1>
           <div className="flex flex-wrap items-center gap-3 sm:gap-4">
-            {currentDateStr !== format(new Date(), 'yyyy-MM-dd') && (
+            {currentDateStr !== clientToday && (
               <button
                 onClick={goToToday}
                 className="px-5 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-base font-medium min-h-[44px]"
@@ -189,7 +189,7 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
             >
               📅 <span className="hidden sm:inline">Calendar</span>
             </button>
-            {currentDateStr !== format(new Date(), 'yyyy-MM-dd') && (
+            {currentDateStr !== clientToday && (
               <span className="text-sm text-gray-600">
                 {format(new Date(currentDateStr), 'MMM dd, yyyy')}
               </span>
