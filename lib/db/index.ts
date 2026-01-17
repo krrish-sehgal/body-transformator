@@ -4,9 +4,9 @@ import * as schema from './schema';
 import { migrate } from 'drizzle-orm/postgres-js/migrator';
 
 // Get database URL from environment variables
-// Vercel Postgres provides POSTGRES_URL
-// For local dev, use DATABASE_URL or POSTGRES_URL
-const connectionString = process.env.POSTGRES_URL || process.env.DATABASE_URL;
+// Supabase provides POSTGRES_URL (pooling) and POSTGRES_URL_NON_POOLING (direct)
+// Use pooling connection for app (better for serverless), non-pooling for migrations
+const connectionString = process.env.POSTGRES_URL || process.env.POSTGRES_URL_NON_POOLING || process.env.DATABASE_URL;
 
 if (!connectionString) {
   throw new Error('POSTGRES_URL or DATABASE_URL environment variable is required');
