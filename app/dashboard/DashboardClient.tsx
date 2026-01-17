@@ -407,8 +407,9 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
                           return `${pieces} ${entry.food.unit}(s) • ${Math.round(calories)} cal • P: ${protein.toFixed(1)}g • C: ${carbs.toFixed(1)}g • F: ${fats.toFixed(1)}g`;
                         }
                         
-                        // For tsp, tbsp, slice, etc. - convert back from grams to original unit
-                        if (entry.food.unit !== 'g' && entry.food.unit !== 'piece' && entry.food.unitSize) {
+                        // For custom foods or foods with unitSize (tsp, tbsp, slice, piece with unitSize, etc.)
+                        // Convert back from grams to original unit
+                        if (entry.food.unit !== 'g' && entry.food.unitSize) {
                           const units = entry.quantity / entry.food.unitSize;
                           const calories = (entry.food.caloriesPer100g || 0) * (entry.quantity / 100);
                           const protein = (entry.food.proteinPer100g || 0) * (entry.quantity / 100);
