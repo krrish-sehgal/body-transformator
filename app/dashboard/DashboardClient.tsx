@@ -433,14 +433,14 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
                           return `${pieces} ${entry.food.unit}(s) • ${Math.round(calories)} cal • P: ${protein.toFixed(1)}g • C: ${carbs.toFixed(1)}g • F: ${fats.toFixed(1)}g`;
                         }
                         
-                        // Priority 3: For other non-gram units without unitSize (shouldn't happen, but fallback)
+                        // Priority 3: For other non-gram units without unitSize (shouldn't happen, but fallback to grams)
                         if (entry.food.unit !== 'g' && !entry.food.unitSize) {
-                          const units = entry.quantity / entry.food.unitSize;
+                          // If no unitSize, treat as grams (fallback)
                           const calories = (entry.food.caloriesPer100g || 0) * (entry.quantity / 100);
                           const protein = (entry.food.proteinPer100g || 0) * (entry.quantity / 100);
                           const carbs = (entry.food.carbsPer100g || 0) * (entry.quantity / 100);
                           const fats = (entry.food.fatsPer100g || 0) * (entry.quantity / 100);
-                          return `${units.toFixed(1)} ${entry.food.unit}(s) • ${Math.round(calories)} cal • P: ${protein.toFixed(1)}g • C: ${carbs.toFixed(1)}g • F: ${fats.toFixed(1)}g`;
+                          return `${entry.quantity}g • ${Math.round(calories)} cal • P: ${protein.toFixed(1)}g • C: ${carbs.toFixed(1)}g • F: ${fats.toFixed(1)}g`;
                         }
                         
                         // Otherwise use per-100g calculation for gram-based foods

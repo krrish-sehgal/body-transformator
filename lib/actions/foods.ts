@@ -163,7 +163,7 @@ export async function getDailyLog(userId: string, date?: string) {
       const food = foodMap.get(entry.foodName);
       if (!food) {
         // Food not found in JSON (might have been removed), use default values
-        console.warn(`Food "${entry.foodName}" not found in foods.json`);
+        console.warn(`Food "${entry.foodName}" not found in foods.json or custom foods`);
         return {
           id: entry.id,
           foodId: entry.foodName,
@@ -176,7 +176,7 @@ export async function getDailyLog(userId: string, date?: string) {
             carbsPer100g: 0,
             fatsPer100g: 0,
             unit: 'g',
-            unitSize: 100,
+            unitSize: undefined,
           },
         };
       }
@@ -192,8 +192,8 @@ export async function getDailyLog(userId: string, date?: string) {
           proteinPer100g: food.proteinPer100g || 0,
           carbsPer100g: food.carbsPer100g || 0,
           fatsPer100g: food.fatsPer100g || 0,
-          unit: food.unit,
-          unitSize: food.unitSize || undefined, // Preserve unitSize even if it's null in DB
+          unit: food.unit || 'g',
+          unitSize: food.unitSize !== null && food.unitSize !== undefined ? Number(food.unitSize) : undefined,
           caloriesPerPiece: food.caloriesPerPiece || undefined,
           proteinPerPiece: food.proteinPerPiece || undefined,
           carbsPerPiece: food.carbsPerPiece || undefined,
