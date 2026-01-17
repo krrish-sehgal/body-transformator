@@ -397,7 +397,20 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
                           return `${units.toFixed(1)} ${unit}(s) • ${Math.round(calories)} cal • P: ${protein.toFixed(1)}g • C: ${carbs.toFixed(1)}g • F: ${fats.toFixed(1)}g`;
                         }
                         
-                        // If piece-based food, use per-piece calculation (quantity IS piece count)
+                        // Priority 1: Foods with unitSize (custom foods, tsp, tbsp, slice, piece with unitSize, etc.)
+                        // Convert back from grams to original unit
+                        // This takes priority because if unitSize exists, quantity is stored in grams
+                        if (entry.food.unitSize && entry.food.unit !== 'g') {
+                          const units = entry.quantity / entry.food.unitSize;
+                          const calories = (entry.food.caloriesPer100g || 0) * (entry.quantity / 100);
+                          const protein = (entry.food.proteinPer100g || 0) * (entry.quantity / 100);
+                          const carbs = (entry.food.carbsPer100g || 0) * (entry.quantity / 100);
+                          const fats = (entry.food.fatsPer100g || 0) * (entry.quantity / 100);
+                          return `${units.toFixed(1)} ${entry.food.unit}(s) • ${Math.round(calories)} cal • P: ${protein.toFixed(1)}g • C: ${carbs.toFixed(1)}g • F: ${fats.toFixed(1)}g`;
+                        }
+                        
+                        // Priority 2: Piece-based foods with per-piece values (eggs, cookies, roti)
+                        // Quantity IS piece count, not grams
                         if (entry.food.unit === 'piece' && entry.food.caloriesPerPiece) {
                           const pieces = entry.quantity; // Quantity IS piece count
                           const calories = (entry.food.caloriesPerPiece || 0) * pieces;
@@ -407,9 +420,8 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
                           return `${pieces} ${entry.food.unit}(s) • ${Math.round(calories)} cal • P: ${protein.toFixed(1)}g • C: ${carbs.toFixed(1)}g • F: ${fats.toFixed(1)}g`;
                         }
                         
-                        // For custom foods or foods with unitSize (tsp, tbsp, slice, piece with unitSize, etc.)
-                        // Convert back from grams to original unit
-                        if (entry.food.unit !== 'g' && entry.food.unitSize) {
+                        // Priority 3: For other non-gram units without unitSize (shouldn't happen, but fallback)
+                        if (entry.food.unit !== 'g' && !entry.food.unitSize) {
                           const units = entry.quantity / entry.food.unitSize;
                           const calories = (entry.food.caloriesPer100g || 0) * (entry.quantity / 100);
                           const protein = (entry.food.proteinPer100g || 0) * (entry.quantity / 100);
