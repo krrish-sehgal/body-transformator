@@ -30,6 +30,7 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
   const [selectedFood, setSelectedFood] = useState('');
   const [selectedFoodObj, setSelectedFoodObj] = useState<any>(null);
   const [quantity, setQuantity] = useState('');
+  const [selectedUnit, setSelectedUnit] = useState<'tsp' | 'tbsp' | null>(null); // For oil unit switching
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -60,6 +61,11 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
     let quantityToStore: number;
     if (selectedFoodObj.unit === 'piece') {
       quantityToStore = parseFloat(quantity); // Store piece count directly (for eggs, cookies, etc.)
+    } else if (selectedFoodObj.name === 'Oil (any)') {
+      // Special handling for oil - use selected unit (tsp or tbsp)
+      // 1 tsp = 5g, 1 tbsp = 15g
+      const unitSize = selectedUnit === 'tbsp' ? 15 : 5;
+      quantityToStore = parseFloat(quantity) * unitSize;
     } else if (selectedFoodObj.unit !== 'g' && selectedFoodObj.unitSize) {
       // For tsp, tbsp, slice, etc. - convert to grams using unitSize
       quantityToStore = parseFloat(quantity) * selectedFoodObj.unitSize;
@@ -289,6 +295,12 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
                 const food = foods.find(f => f.id === e.target.value);
                 setSelectedFoodObj(food || null);
                 setQuantity('');
+                // Reset unit selector when food changes
+                if (food?.name === 'Oil (any)') {
+                  setSelectedUnit('tsp'); // Default to tsp
+                } else {
+                  setSelectedUnit(null);
+                }
               }}
               required
               className="flex-1 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white text-base min-h-[44px]"
@@ -301,12 +313,32 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
               ))}
             </select>
             <div className="flex items-center gap-3">
+              {/* Unit selector for Oil */}
+              {selectedFoodObj?.name === 'Oil (any)' && (
+                <select
+                  value={selectedUnit || 'tsp'}
+                  onChange={(e) => {
+                    setSelectedUnit(e.target.value as 'tsp' | 'tbsp');
+                    setQuantity(''); // Reset quantity when unit changes
+                  }}
+                  className="px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white text-base min-h-[44px]"
+                >
+                  <option value="tsp">tsp</option>
+                  <option value="tbsp">tbsp</option>
+                </select>
+              )}
               <input
                 type="number"
                 step="0.1"
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
-                placeholder={selectedFoodObj?.unit === 'g' ? 'Quantity (g)' : `Quantity (${selectedFoodObj?.unit || 'g'})`}
+                placeholder={
+                  selectedFoodObj?.name === 'Oil (any)' 
+                    ? `Quantity (${selectedUnit || 'tsp'})` 
+                    : selectedFoodObj?.unit === 'g' 
+                      ? 'Quantity (g)' 
+                      : `Quantity (${selectedFoodObj?.unit || 'g'})`
+                }
                 required
                 className="w-32 sm:w-32 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white text-base min-h-[44px]"
               />
