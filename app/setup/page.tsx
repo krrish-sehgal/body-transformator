@@ -297,47 +297,47 @@ export default function SetupPage() {
             {targets && (
               <div className="mt-6">
                 {/* Summary Targets */}
-                <div className="p-6 bg-blue-50 rounded-lg border border-blue-200 mb-6">
-                  <h2 className="text-xl font-semibold mb-4 text-gray-900">Your Recomp Targets</h2>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="p-4 sm:p-6 bg-blue-50 rounded-lg border border-blue-200 mb-4 sm:mb-6">
+                  <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-gray-900">Your Recomp Targets</h2>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
                     <div>
-                      <div className="text-sm text-gray-600">Calories</div>
-                      <div className="text-2xl font-bold text-blue-600">{targets.recompCalories}</div>
+                      <div className="text-xs sm:text-sm text-gray-600">Calories</div>
+                      <div className="text-xl sm:text-2xl font-bold text-blue-600">{targets.recompCalories}</div>
                     </div>
                     <div>
-                      <div className="text-sm text-gray-600">Protein (g)</div>
-                      <div className="text-2xl font-bold text-blue-600">{targets.protein}</div>
+                      <div className="text-xs sm:text-sm text-gray-600">Protein (g)</div>
+                      <div className="text-xl sm:text-2xl font-bold text-blue-600">{targets.protein}</div>
                     </div>
                     <div>
-                      <div className="text-sm text-gray-600">Carbs (g)</div>
-                      <div className="text-2xl font-bold text-blue-600">{targets.carbs}</div>
+                      <div className="text-xs sm:text-sm text-gray-600">Carbs (g)</div>
+                      <div className="text-xl sm:text-2xl font-bold text-blue-600">{targets.carbs}</div>
                     </div>
                     <div>
-                      <div className="text-sm text-gray-600">Fats (g)</div>
-                      <div className="text-2xl font-bold text-blue-600">{targets.fats}</div>
+                      <div className="text-xs sm:text-sm text-gray-600">Fats (g)</div>
+                      <div className="text-xl sm:text-2xl font-bold text-blue-600">{targets.fats}</div>
                     </div>
                   </div>
                 </div>
 
                 {/* Detailed Calculation Formulas */}
-                <div className="bg-white rounded-lg shadow-lg p-6 border-2 border-blue-200">
-                  <h2 className="text-2xl font-bold mb-6 text-gray-900 border-b-2 border-gray-300 pb-3">
+                <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 border-2 border-blue-200">
+                  <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-gray-900 border-b-2 border-gray-300 pb-2 sm:pb-3">
                     📊 Calculation Formulas
                   </h2>
                   
-                  <div className="space-y-5">
-                    <div className="bg-blue-50 p-5 rounded-lg border-l-4 border-blue-600 shadow-sm">
-                      <div className="font-bold text-lg mb-3 text-blue-900">1. Height Conversion:</div>
-                      <div className="font-mono text-base text-gray-800 bg-white p-3 rounded border">
+                  <div className="space-y-3 sm:space-y-5">
+                    <div className="bg-blue-50 p-3 sm:p-5 rounded-lg border-l-4 border-blue-600 shadow-sm">
+                      <div className="font-bold text-base sm:text-lg mb-2 sm:mb-3 text-blue-900">1. Height Conversion:</div>
+                      <div className="font-mono text-sm sm:text-base text-gray-800 bg-white p-2 sm:p-3 rounded border">
                         Height = ({formData.heightFeet || '0'} ft × 12 + {formData.heightInches || '0'} in) × 2.54
                         <br />
                         <span className="text-lg font-bold text-blue-700">= {Math.round(((parseFloat(formData.heightFeet || '0') * 12) + parseFloat(formData.heightInches || '0')) * 2.54)} cm</span>
                       </div>
                     </div>
 
-                    <div className="bg-blue-50 p-5 rounded-lg border-l-4 border-blue-600 shadow-sm">
-                      <div className="font-bold text-lg mb-3 text-blue-900">2. BMR (Basal Metabolic Rate) - Mifflin-St Jeor Equation:</div>
-                      <div className="font-mono text-base text-gray-800 bg-white p-3 rounded border">
+                    <div className="bg-blue-50 p-3 sm:p-5 rounded-lg border-l-4 border-blue-600 shadow-sm">
+                      <div className="font-bold text-base sm:text-lg mb-2 sm:mb-3 text-blue-900">2. BMR (Basal Metabolic Rate) - Mifflin-St Jeor Equation:</div>
+                      <div className="font-mono text-sm sm:text-base text-gray-800 bg-white p-2 sm:p-3 rounded border">
                         {formData.gender === 'male' ? (
                           <>BMR = 10 × <span className="font-bold text-blue-600">{formData.weightKg || '0'}</span> + 6.25 × <span className="font-bold text-blue-600">{Math.round(((parseFloat(formData.heightFeet || '0') * 12) + parseFloat(formData.heightInches || '0')) * 2.54)}</span> - 5 × <span className="font-bold text-blue-600">{formData.age || '0'}</span> + 5</>
                         ) : (
@@ -348,9 +348,9 @@ export default function SetupPage() {
                       </div>
                     </div>
 
-                    <div className="bg-green-50 p-5 rounded-lg border-l-4 border-green-600 shadow-sm">
-                      <div className="font-bold text-lg mb-3 text-green-900">3. Activity Multiplier (Fixed):</div>
-                      <div className="font-mono text-base text-gray-800 bg-white p-3 rounded border">
+                    <div className="bg-green-50 p-3 sm:p-5 rounded-lg border-l-4 border-green-600 shadow-sm">
+                      <div className="font-bold text-base sm:text-lg mb-2 sm:mb-3 text-green-900">3. Activity Multiplier (Fixed):</div>
+                      <div className="font-mono text-sm sm:text-base text-gray-800 bg-white p-2 sm:p-3 rounded border">
                         Activity Multiplier = <span className="font-bold text-green-600">{recompConfig.activity.multiplier}</span> (fixed for recomp)
                       </div>
                     </div>
