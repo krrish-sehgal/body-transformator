@@ -143,7 +143,7 @@ export async function updateUserProfile(
       .update(userProfiles)
       .set({
         ...data,
-        updatedAt: new Date().toISOString(),
+        updatedAt: new Date(),
       })
       .where(eq(userProfiles.userId, userId));
 
