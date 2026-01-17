@@ -1,29 +1,38 @@
-import Database from 'better-sqlite3';
-import { drizzle } from 'drizzle-orm/better-sqlite3';
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
 import * as schema from './schema';
-import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
-import path from 'path';
-import fs from 'fs';
+import { migrate } from 'drizzle-orm/postgres-js/migrator';
 
-// Ensure data directory exists
-const dataDir = path.join(process.cwd(), 'data');
-if (!fs.existsSync(dataDir)) {
-  fs.mkdirSync(dataDir, { recursive: true });
+// Get database URL from environment variables
+// Vercel Postgres provides POSTGRES_URL
+// For local dev, use DATABASE_URL or POSTGRES_URL
+const connectionString = process.env.POSTGRES_URL || process.env.DATABASE_URL;
+
+if (!connectionString) {
+  throw new Error('POSTGRES_URL or DATABASE_URL environment variable is required');
 }
 
-const dbPath = path.join(dataDir, 'transformatator.db');
-const sqlite = new Database(dbPath);
-sqlite.pragma('foreign_keys = ON'); // Enable foreign keys
+// Create postgres client
+const client = postgres(connectionString, {
+  max: 1, // Limit connections for serverless
+});
 
-export const db = drizzle(sqlite, { schema });
+// Create drizzle instance
+export const db = drizzle(client, { schema });
 
-// Run migrations on first import (only in development)
-if (process.env.NODE_ENV !== 'production') {
-  try {
-    migrate(db, { migrationsFolder: './lib/db/migrations' });
-  } catch (error) {
-    // Migrations might not exist yet, that's okay
-    console.log('No migrations found, run: npm run db:generate');
-  }
+// Run migrations (only in development or on first deploy)
+// In production, migrations should be run separately
+if (process.env.NODE_ENV !== 'production' || process.env.RUN_MIGRATIONS === 'true') {
+  migrate(db, { migrationsFolder: './lib/db/migrations' })
+    .then(() => {
+      console.log('✅ Migrations completed');
+    })
+    .catch((error) => {
+      // Don't fail if migrations already ran
+      if (error.message?.includes('already exists')) {
+        console.log('ℹ️ Migrations already applied');
+      } else {
+        console.error('❌ Migration error:', error);
+      }
+    });
 }
-

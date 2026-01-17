@@ -1,16 +1,16 @@
-import { sqliteTable, text, real, integer } from 'drizzle-orm/sqlite-core';
+import { pgTable, text, real, integer, timestamp } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 
 // Users table for authentication
-export const users = sqliteTable('users', {
+export const users = pgTable('users', {
   id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
   username: text('username').notNull().unique(),
   passwordHash: text('password_hash').notNull(),
-  createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
 // User profiles (one per user)
-export const userProfiles = sqliteTable('user_profiles', {
+export const userProfiles = pgTable('user_profiles', {
   id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
   userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   weightKg: real('weight_kg').notNull(),
@@ -25,13 +25,13 @@ export const userProfiles = sqliteTable('user_profiles', {
   targetProtein: real('target_protein'),
   targetFats: real('target_fats'),
   targetCarbs: real('target_carbs'),
-  createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
-  updatedAt: text('updated_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
 // Foods are stored in lib/config/foods.json, but users can also add custom foods
 // Custom foods are stored in the database
-export const customFoods = sqliteTable('custom_foods', {
+export const customFoods = pgTable('custom_foods', {
   id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
   userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   name: text('name').notNull(),
@@ -48,11 +48,11 @@ export const customFoods = sqliteTable('custom_foods', {
   carbsPerPiece: real('carbs_per_piece'),
   fatsPerPiece: real('fats_per_piece'),
   notes: text('notes'),
-  createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
 // Daily logs (one per user per day)
-export const dailyLogs = sqliteTable('daily_logs', {
+export const dailyLogs = pgTable('daily_logs', {
   id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
   userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   date: text('date').notNull(), // Format: YYYY-MM-DD
@@ -61,27 +61,27 @@ export const dailyLogs = sqliteTable('daily_logs', {
   totalProtein: real('total_protein'),
   totalCarbs: real('total_carbs'),
   totalFats: real('total_fats'),
-  createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
-  updatedAt: text('updated_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
 // Log entries (foods eaten in a day)
 // foodName references the name in lib/config/foods.json
-export const logEntries = sqliteTable('log_entries', {
+export const logEntries = pgTable('log_entries', {
   id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
   dailyLogId: text('daily_log_id').notNull().references(() => dailyLogs.id, { onDelete: 'cascade' }),
   foodName: text('food_name').notNull(), // Name from foods.json
   quantity: real('quantity').notNull(), // In grams
-  createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
 // Body metrics tracking
-export const bodyMetrics = sqliteTable('body_metrics', {
+export const bodyMetrics = pgTable('body_metrics', {
   id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
   userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   date: text('date').notNull(), // Format: YYYY-MM-DD
   weightKg: real('weight_kg'),
   bodyFatPercent: real('body_fat_percent'),
-  createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 

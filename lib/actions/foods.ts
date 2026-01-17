@@ -244,7 +244,7 @@ export async function getDailyLog(userId: string, date?: string) {
         totalProtein: roundedTotals.protein,
         totalCarbs: roundedTotals.carbs,
         totalFats: roundedTotals.fats,
-        updatedAt: sql`CURRENT_TIMESTAMP`,
+        updatedAt: sql`NOW()`,
       })
       .where(eq(dailyLogs.id, log.id));
 

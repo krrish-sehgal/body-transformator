@@ -39,3 +39,8 @@ next-env.d.ts
 /data/*.db
 /data/*.db-journal
 
+# environment variables
+.env
+.env.local
+.env*.local
+
