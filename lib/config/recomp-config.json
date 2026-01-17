@@ -1,0 +1,32 @@
+{
+  "activity": {
+    "multiplier": 1.45,
+    "description": "Fixed activity multiplier for recomp"
+  },
+  "recomp": {
+    "method": "subtract",
+    "subtractValue": 300,
+    "intakeBufferMin": 150,
+    "intakeBufferMax": 250,
+    "description": "Recomp calories = Maintenance - subtractValue. Real intake includes macro calories + buffer (cooking oil, variance, etc.)"
+  },
+  "protein": {
+    "ratioPerKg": 1.9,
+    "caloriesPerGram": 4,
+    "description": "Protein requirement in grams per kg bodyweight"
+  },
+  "fat": {
+    "ratioPerKg": 0.8,
+    "caloriesPerGram": 9,
+    "description": "Fat requirement in grams per kg bodyweight"
+  },
+  "carbs": {
+    "capped": true,
+    "min": 220,
+    "max": 240,
+    "target": 230,
+    "caloriesPerGram": 4,
+    "description": "Carbs are capped for recomposition (not calculated from remaining calories)"
+  }
+}
+

@@ -1,0 +1,158 @@
+[
+  {
+    "name": "Roti (plain, no ghee)",
+    "unit": "piece",
+    "caloriesPerPiece": 105,
+    "proteinPerPiece": 3,
+    "carbsPerPiece": 19,
+    "fatsPerPiece": 1,
+    "notes": "1 medium roti (18-20g carbs, ~100-110 cal, 3-4g protein, ~1g fat)"
+  },
+  {
+    "name": "Rice (cooked)",
+    "caloriesPer100g": 130,
+    "proteinPer100g": 2.5,
+    "carbsPer100g": 28,
+    "fatsPer100g": 0.3,
+    "unit": "g",
+    "unitSize": 100,
+    "notes": "100g cooked rice"
+  },
+  {
+    "name": "Brown Bread",
+    "caloriesPer100g": 250,
+    "proteinPer100g": 10,
+    "carbsPer100g": 50,
+    "fatsPer100g": 5,
+    "unit": "slice",
+    "unitSize": 30,
+    "notes": "1 slice ~30g"
+  },
+  {
+    "name": "Egg (whole)",
+    "unit": "piece",
+    "caloriesPerPiece": 70,
+    "proteinPerPiece": 6,
+    "carbsPerPiece": 1,
+    "fatsPerPiece": 5,
+    "notes": "1 large egg"
+  },
+  {
+    "name": "Egg White",
+    "unit": "piece",
+    "caloriesPerPiece": 17,
+    "proteinPerPiece": 3.5,
+    "carbsPerPiece": 0.2,
+    "fatsPerPiece": 0,
+    "notes": "1 egg white (from 1 large egg)"
+  },
+  {
+    "name": "Max Protein Cookie (Chocochip)",
+    "unit": "piece",
+    "caloriesPerPiece": 263,
+    "proteinPerPiece": 10,
+    "carbsPerPiece": 24.8,
+    "fatsPerPiece": 13.7,
+    "notes": "1 cookie (17g sugar included in carbs)"
+  },
+  {
+    "name": "Potato (cooked)",
+    "caloriesPer100g": 80,
+    "proteinPer100g": 2,
+    "carbsPer100g": 17,
+    "fatsPer100g": 0.1,
+    "unit": "g",
+    "unitSize": 100,
+    "notes": "100g cooked potato"
+  },
+  {
+    "name": "Paneer",
+    "caloriesPer100g": 220,
+    "proteinPer100g": 17.5,
+    "carbsPer100g": 3.5,
+    "fatsPer100g": 18,
+    "unit": "g",
+    "unitSize": 100,
+    "notes": "Per 100g (typically use 200g)"
+  },
+  {
+    "name": "Tofu",
+    "caloriesPer100g": 80,
+    "proteinPer100g": 8,
+    "carbsPer100g": 2,
+    "fatsPer100g": 4.5,
+    "unit": "g",
+    "unitSize": 100,
+    "notes": "Firm tofu, lighter paneer substitute"
+  },
+  {
+    "name": "Chicken Breast (raw)",
+    "caloriesPer100g": 165,
+    "proteinPer100g": 26,
+    "carbsPer100g": 0,
+    "fatsPer100g": 3.6,
+    "unit": "g",
+    "unitSize": 100,
+    "notes": "Skinless, raw weight (protein stays same after cooking)"
+  },
+  {
+    "name": "Chicken Thigh (raw, skinless)",
+    "caloriesPer100g": 209,
+    "proteinPer100g": 18,
+    "carbsPer100g": 0,
+    "fatsPer100g": 15.5,
+    "unit": "g",
+    "unitSize": 100,
+    "notes": "Raw weight (protein stays same after cooking)"
+  },
+  {
+    "name": "Curd (plain)",
+    "caloriesPer100g": 62,
+    "proteinPer100g": 3.7,
+    "carbsPer100g": 5,
+    "fatsPer100g": 3,
+    "unit": "g",
+    "unitSize": 100,
+    "notes": "Plain dahi"
+  },
+  {
+    "name": "Rajma (cooked)",
+    "caloriesPer100g": 120,
+    "proteinPer100g": 8.5,
+    "carbsPer100g": 20,
+    "fatsPer100g": 0.5,
+    "unit": "g",
+    "unitSize": 100,
+    "notes": "100g cooked rajma"
+  },
+  {
+    "name": "Soya Chunks (raw)",
+    "caloriesPer100g": 333,
+    "proteinPer100g": 50,
+    "carbsPer100g": 33,
+    "fatsPer100g": 3,
+    "unit": "g",
+    "unitSize": 60,
+    "notes": "60g raw (~180g cooked)"
+  },
+  {
+    "name": "Oil (any)",
+    "caloriesPer100g": 900,
+    "proteinPer100g": 0,
+    "carbsPer100g": 0,
+    "fatsPer100g": 100,
+    "unit": "tsp",
+    "unitSize": 5,
+    "notes": "1 tsp oil = 45 kcal, 5g fat (15g per tbsp)"
+  },
+  {
+    "name": "Fruit (medium)",
+    "caloriesPer100g": 50,
+    "proteinPer100g": 0.5,
+    "carbsPer100g": 12.5,
+    "fatsPer100g": 0.2,
+    "unit": "piece",
+    "unitSize": 125,
+    "notes": "Average medium fruit"
+  }
+]
