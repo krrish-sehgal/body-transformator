@@ -266,22 +266,22 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
         </div>
 
         {/* Food Entry Form */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-gray-900">Add Food Entry</h2>
+        <div className="bg-white rounded-lg shadow-md p-5 sm:p-6 mb-5 sm:mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-5 gap-4">
+            <h2 className="text-xl sm:text-xl font-semibold text-gray-900">Add Food Entry</h2>
             <button
               onClick={() => setIsAddFoodModalOpen(true)}
-              className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm font-medium"
+              className="px-5 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 text-base font-medium whitespace-nowrap min-h-[44px]"
             >
               ➕ Add Custom Food
             </button>
           </div>
           {error && (
-            <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+            <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded text-base">
               {error}
             </div>
           )}
-          <form onSubmit={handleAddFood} className="flex gap-4">
+          <form onSubmit={handleAddFood} className="flex flex-col sm:flex-row gap-4">
             <select
               value={selectedFood}
               onChange={(e) => {
@@ -291,7 +291,7 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
                 setQuantity('');
               }}
               required
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
+              className="flex-1 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white text-base min-h-[44px]"
             >
               <option value="">Select a food</option>
               {foods.map((food) => (
@@ -300,7 +300,7 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
                 </option>
               ))}
             </select>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <input
                 type="number"
                 step="0.1"
@@ -308,7 +308,7 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
                 onChange={(e) => setQuantity(e.target.value)}
                 placeholder={selectedFoodObj?.unit === 'g' ? 'Quantity (g)' : `Quantity (${selectedFoodObj?.unit || 'g'})`}
                 required
-                className="w-32 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
+                className="w-32 sm:w-32 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white text-base min-h-[44px]"
               />
               {selectedFoodObj && selectedFoodObj.unit === 'piece' && (
                 <span className="text-sm text-gray-600 whitespace-nowrap">
@@ -319,7 +319,7 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
             <button
               type="submit"
               disabled={loading}
-              className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+              className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-base font-medium whitespace-nowrap min-h-[44px]"
             >
               {loading ? 'Adding...' : 'Add'}
             </button>
