@@ -34,7 +34,18 @@ export default async function DashboardPage({
       date = date.substring(0, 10);
     }
   }
+  
+  // Debug logging
+  console.log(`[DashboardPage] Requested date: ${date || 'undefined (will use today)'}`);
+  
   const dailyLog = await getDailyLog(userId, date);
+  
+  // Debug logging
+  if (dailyLog) {
+    console.log(`[DashboardPage] Found dailyLog for date: ${dailyLog.date}`);
+  } else {
+    console.log(`[DashboardPage] No dailyLog found for requested date`);
+  }
   const foods = await getAllFoods(userId);
   const allDailyLogs = await getAllDailyLogs(userId);
 

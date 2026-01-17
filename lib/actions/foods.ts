@@ -91,11 +91,20 @@ export async function getDailyLog(userId: string, date?: string) {
       targetDate = targetDate.substring(0, 10);
     }
     
+    // Debug logging (remove in production if needed)
+    console.log(`[getDailyLog] Querying for date: ${targetDate}, userId: ${userId}`);
+    
     const [log] = await db
       .select()
       .from(dailyLogs)
       .where(and(eq(dailyLogs.userId, userId), eq(dailyLogs.date, targetDate)))
       .limit(1);
+    
+    if (log) {
+      console.log(`[getDailyLog] Found log for date: ${log.date}, logId: ${log.id}`);
+    } else {
+      console.log(`[getDailyLog] No log found for date: ${targetDate}`);
+    }
 
     if (!log) {
       return null;

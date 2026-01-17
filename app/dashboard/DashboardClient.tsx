@@ -156,6 +156,9 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
       normalizedDate = normalizedDate.substring(0, 10);
     }
     
+    // Debug logging
+    console.log(`[handleDateSelect] Selected date: ${normalizedDate}, clientToday: ${clientToday}`);
+    
     // Use router.push with replace to ensure URL updates immediately
     if (normalizedDate === clientToday) {
       router.push('/dashboard', { scroll: false });
