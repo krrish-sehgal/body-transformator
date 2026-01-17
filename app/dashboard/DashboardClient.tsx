@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { calculateRecompTargets } from '@/lib/calculations/recomp';
 import { addFoodEntry, deleteFoodEntry } from '@/lib/actions/foods';
 import { useRouter } from 'next/navigation';
@@ -36,7 +36,33 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isAddFoodModalOpen, setIsAddFoodModalOpen] = useState(false);
   
-  const currentDateStr = currentDate || format(new Date(), 'yyyy-MM-dd');
+  // Use client-side date to ensure correct timezone
+  const [clientToday, setClientToday] = useState(() => format(new Date(), 'yyyy-MM-dd'));
+  const currentDateStr = currentDate || clientToday;
+  
+  // Check if date has changed (e.g., after midnight)
+  useEffect(() => {
+    const checkDateChange = () => {
+      const today = format(new Date(), 'yyyy-MM-dd');
+      if (today !== clientToday) {
+        setClientToday(today);
+        // If viewing today's date (no date param or date matches old today), refresh to show new day
+        const isViewingToday = !currentDate || currentDate === clientToday;
+        if (isViewingToday) {
+          router.push('/dashboard');
+          router.refresh();
+        }
+      }
+    };
+    
+    // Check immediately
+    checkDateChange();
+    
+    // Check every minute to catch midnight transitions
+    const interval = setInterval(checkDateChange, 60000);
+    
+    return () => clearInterval(interval);
+  }, [clientToday, currentDate, router]);
 
   // Recalculate targets to show formulas
   const targets = calculateRecompTargets(
