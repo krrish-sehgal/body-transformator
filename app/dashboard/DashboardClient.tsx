@@ -369,6 +369,17 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
                     <div className="font-medium text-gray-900 text-base mb-1">{entry.food.name}</div>
                     <div className="text-sm text-gray-600">
                       {(() => {
+                        // Debug: Log entry data if unitSize is missing
+                        if (entry.food.unit !== 'g' && !entry.food.unitSize && entry.food.name !== 'Oil (any)') {
+                          console.log('Food entry debug:', {
+                            name: entry.food.name,
+                            unit: entry.food.unit,
+                            unitSize: entry.food.unitSize,
+                            quantity: entry.quantity,
+                            hasCaloriesPerPiece: !!entry.food.caloriesPerPiece
+                          });
+                        }
+                        
                         // Special handling for Oil - can be tsp or tbsp
                         if (entry.food.name === 'Oil (any)') {
                           // Determine if it was tbsp (15g) or tsp (5g) based on quantity
@@ -400,9 +411,9 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
                         // Priority 1: Foods with unitSize (custom foods, tsp, tbsp, slice, piece with unitSize, etc.)
                         // Convert back from grams to original unit
                         // This takes priority because if unitSize exists, quantity is stored in grams
-                        if (entry.food.unitSize && entry.food.unit !== 'g' && entry.quantity && !isNaN(entry.quantity) && !isNaN(entry.food.unitSize)) {
+                        if (entry.food.unitSize != null && entry.food.unitSize > 0 && entry.food.unit !== 'g' && entry.quantity != null && !isNaN(entry.quantity)) {
                           const units = entry.quantity / entry.food.unitSize;
-                          if (!isNaN(units) && isFinite(units)) {
+                          if (!isNaN(units) && isFinite(units) && units > 0) {
                             const calories = (entry.food.caloriesPer100g || 0) * (entry.quantity / 100);
                             const protein = (entry.food.proteinPer100g || 0) * (entry.quantity / 100);
                             const carbs = (entry.food.carbsPer100g || 0) * (entry.quantity / 100);
