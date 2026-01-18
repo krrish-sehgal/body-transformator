@@ -164,5 +164,72 @@
     "unit": "piece",
     "unitSize": 125,
     "notes": "Average medium fruit"
+  },
+  {
+    "name": "Pudina Chutney",
+    "caloriesPer100g": 67,
+    "proteinPer100g": 3.3,
+    "carbsPer100g": 13.3,
+    "fatsPer100g": 0.7,
+    "unit": "tbsp",
+    "unitSize": 15,
+    "notes": "Per 1 tbsp (~15g): Includes adarak (ginger), lasan (garlic), pudina leaves. ~10 cal, ~0.5g protein, ~2g carbs, ~0.1g fat"
+  },
+  {
+    "name": "Gajar Aloo Paratha",
+    "unit": "piece",
+    "caloriesPerPiece": 200,
+    "proteinPerPiece": 4.5,
+    "carbsPerPiece": 32,
+    "fatsPerPiece": 7,
+    "notes": "Medium sized paratha, mediumly oiled on tawa"
+  },
+  {
+    "name": "Idli",
+    "unit": "piece",
+    "caloriesPerPiece": 35,
+    "proteinPerPiece": 1.5,
+    "carbsPerPiece": 7,
+    "fatsPerPiece": 0.1,
+    "notes": "1 piece of idli"
+  },
+  {
+    "name": "Dosa",
+    "unit": "piece",
+    "caloriesPerPiece": 135,
+    "proteinPerPiece": 3.5,
+    "carbsPerPiece": 22,
+    "fatsPerPiece": 4,
+    "notes": "1 dosa"
+  },
+  {
+    "name": "Sambar",
+    "caloriesPer100g": 45,
+    "proteinPer100g": 1.8,
+    "carbsPer100g": 6.5,
+    "fatsPer100g": 0.8,
+    "unit": "katori",
+    "unitSize": 150,
+    "notes": "Medium sized katori (~150g cooked sambar)"
+  },
+  {
+    "name": "Yellow Dal",
+    "caloriesPer100g": 75,
+    "proteinPer100g": 4.5,
+    "carbsPer100g": 11,
+    "fatsPer100g": 1.8,
+    "unit": "katori",
+    "unitSize": 150,
+    "notes": "Medium sized katori (~150g cooked dal)"
+  },
+  {
+    "name": "Black Ma Chane Ki Dal",
+    "caloriesPer100g": 88,
+    "proteinPer100g": 5.2,
+    "carbsPer100g": 12.5,
+    "fatsPer100g": 1.8,
+    "unit": "katori",
+    "unitSize": 150,
+    "notes": "Medium sized katori (~150g cooked black chickpea dal)"
   }
 ]
