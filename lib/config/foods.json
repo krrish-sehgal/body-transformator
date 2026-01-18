@@ -156,14 +156,22 @@
     "notes": "Per 1 tbsp (~15g): ~21 kcal, ~5g carbs, ~0.3g protein, ~0g fat"
   },
   {
-    "name": "Fruit (medium)",
-    "caloriesPer100g": 50,
-    "proteinPer100g": 0.5,
-    "carbsPer100g": 12.5,
-    "fatsPer100g": 0.2,
+    "name": "Apple",
     "unit": "piece",
-    "unitSize": 125,
-    "notes": "Average medium fruit"
+    "caloriesPerPiece": 95,
+    "proteinPerPiece": 0.5,
+    "carbsPerPiece": 25,
+    "fatsPerPiece": 0.3,
+    "notes": "1 medium apple (~180g)"
+  },
+  {
+    "name": "Banana",
+    "unit": "piece",
+    "caloriesPerPiece": 105,
+    "proteinPerPiece": 1.3,
+    "carbsPerPiece": 27,
+    "fatsPerPiece": 0.4,
+    "notes": "1 medium banana (~120g)"
   },
   {
     "name": "Pudina Chutney",
