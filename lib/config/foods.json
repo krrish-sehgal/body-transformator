@@ -239,5 +239,25 @@
     "unit": "katori",
     "unitSize": 150,
     "notes": "Medium sized katori (~150g cooked black chickpea dal)"
+  },
+  {
+    "name": "Protein Dahi (Amul High Protein)",
+    "caloriesPer100g": 68,
+    "proteinPer100g": 6.3,
+    "carbsPer100g": 10.0,
+    "fatsPer100g": 0.1,
+    "unit": "g",
+    "unitSize": 100,
+    "notes": "Amul High Protein Cup Dahi - 400g container (4 servings)"
+  },
+  {
+    "name": "Protein Bread",
+    "caloriesPer100g": 270,
+    "proteinPer100g": 23.7,
+    "carbsPer100g": 32.6,
+    "fatsPer100g": 5.0,
+    "unit": "slice",
+    "unitSize": 27,
+    "notes": "2 slices = 54g (146 kcal, 12.8g protein, 17.6g carbs, 2.7g fat)"
   }
 ]
