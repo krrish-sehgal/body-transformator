@@ -30,11 +30,13 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
   const [selectedFood, setSelectedFood] = useState('');
   const [selectedFoodObj, setSelectedFoodObj] = useState<any>(null);
   const [quantity, setQuantity] = useState('');
-  const [selectedUnit, setSelectedUnit] = useState<'tsp' | 'tbsp' | null>(null); // For oil unit switching
+  const [selectedUnit, setSelectedUnit] = useState<'tsp' | 'tbsp' | 'ml' | 'litre' | null>(null); // For oil and milk unit switching
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isAddFoodModalOpen, setIsAddFoodModalOpen] = useState(false);
+  const [foodSearchQuery, setFoodSearchQuery] = useState('');
+  const [isFoodDropdownOpen, setIsFoodDropdownOpen] = useState(false);
   
   // Use client-side date to ensure correct timezone
   const [clientToday, setClientToday] = useState(() => format(new Date(), 'yyyy-MM-dd'));
@@ -71,9 +73,34 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
     setQuantity('');
     setSelectedUnit(null);
     setError('');
+    setFoodSearchQuery('');
+    setIsFoodDropdownOpen(false);
     // Note: router.refresh() is handled by handleDateSelect, not here
     // to avoid race conditions
   }, [currentDate]);
+
+  // Filter foods based on search query
+  const filteredFoods = foods.filter((food) =>
+    food.name.toLowerCase().includes(foodSearchQuery.toLowerCase())
+  );
+
+  // Handle food selection from dropdown
+  const handleFoodSelect = (foodId: string) => {
+    const food = foods.find(f => f.id === foodId);
+    setSelectedFood(foodId);
+    setSelectedFoodObj(food || null);
+    setFoodSearchQuery(food?.name || '');
+    setQuantity('');
+    setIsFoodDropdownOpen(false);
+    // Reset unit selector when food changes
+    if (food?.name === 'Oil (any)') {
+      setSelectedUnit('tsp'); // Default to tsp
+    } else if (food?.name === 'Milk (whole)') {
+      setSelectedUnit('ml'); // Default to ml
+    } else {
+      setSelectedUnit(null);
+    }
+  };
 
   // Recalculate targets to show formulas
   const targets = calculateRecompTargets(
@@ -101,6 +128,14 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
       // 1 tsp = 5g, 1 tbsp = 15g
       const unitSize = selectedUnit === 'tbsp' ? 15 : 5;
       quantityToStore = parseFloat(quantity) * unitSize;
+    } else if (selectedFoodObj.name === 'Milk (whole)') {
+      // Special handling for milk - use selected unit (ml or litre)
+      // 1 litre = 1000ml, ml is the same as grams for liquids
+      if (selectedUnit === 'litre') {
+        quantityToStore = parseFloat(quantity) * 1000; // Convert litre to ml (grams)
+      } else {
+        quantityToStore = parseFloat(quantity); // ml is same as grams for milk
+      }
     } else if (selectedFoodObj.unit === 'piece' && selectedFoodObj.caloriesPerPiece && !selectedFoodObj.unitSize) {
       // Piece-based foods with per-piece values (eggs, cookies, roti) - store piece count directly
       quantityToStore = parseFloat(quantity);
@@ -121,6 +156,8 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
       setSelectedFoodObj(null);
       setQuantity('');
       setSelectedUnit(null);
+      setFoodSearchQuery('');
+      setIsFoodDropdownOpen(false);
     } else {
       setError(result.error || 'Failed to add food entry. Please try again.');
     }
@@ -344,30 +381,49 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
             </div>
           )}
           <form onSubmit={handleAddFood} className="flex flex-col sm:flex-row gap-4">
-            <select
-              value={selectedFood}
-              onChange={(e) => {
-                setSelectedFood(e.target.value);
-                const food = foods.find(f => f.id === e.target.value);
-                setSelectedFoodObj(food || null);
-                setQuantity('');
-                // Reset unit selector when food changes
-                if (food?.name === 'Oil (any)') {
-                  setSelectedUnit('tsp'); // Default to tsp
-                } else {
-                  setSelectedUnit(null);
-                }
-              }}
-              required
-              className="flex-1 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white text-base min-h-[44px]"
-            >
-              <option value="">Select a food</option>
-              {foods.map((food) => (
-                <option key={food.id} value={food.id}>
-                  {food.name}
-                </option>
-              ))}
-            </select>
+            {/* Searchable Food Dropdown */}
+            <div className="flex-1 relative">
+              <input
+                type="text"
+                value={foodSearchQuery}
+                onChange={(e) => {
+                  const newQuery = e.target.value;
+                  setFoodSearchQuery(newQuery);
+                  setIsFoodDropdownOpen(true);
+                  // Clear selection if search query doesn't match selected food name
+                  if (selectedFoodObj && newQuery !== selectedFoodObj.name) {
+                    setSelectedFood('');
+                    setSelectedFoodObj(null);
+                    setSelectedUnit(null);
+                  }
+                }}
+                onFocus={() => setIsFoodDropdownOpen(true)}
+                onBlur={() => {
+                  // Delay closing to allow click events to fire
+                  setTimeout(() => setIsFoodDropdownOpen(false), 200);
+                }}
+                placeholder="Search and select a food..."
+                required={!selectedFood}
+                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white text-base min-h-[44px]"
+              />
+              {isFoodDropdownOpen && (
+                <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+                  {filteredFoods.length > 0 ? (
+                    filteredFoods.map((food) => (
+                      <div
+                        key={food.id}
+                        onClick={() => handleFoodSelect(food.id)}
+                        className="px-4 py-2 hover:bg-blue-50 cursor-pointer text-gray-900 text-base"
+                      >
+                        {food.name}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="px-4 py-2 text-gray-500 text-base">No foods found</div>
+                  )}
+                </div>
+              )}
+            </div>
             <div className="flex items-center gap-3">
               {/* Unit selector for Oil */}
               {selectedFoodObj?.name === 'Oil (any)' && (
@@ -383,6 +439,20 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
                   <option value="tbsp">tbsp</option>
                 </select>
               )}
+              {/* Unit selector for Milk */}
+              {selectedFoodObj?.name === 'Milk (whole)' && (
+                <select
+                  value={selectedUnit || 'ml'}
+                  onChange={(e) => {
+                    setSelectedUnit(e.target.value as 'ml' | 'litre');
+                    setQuantity(''); // Reset quantity when unit changes
+                  }}
+                  className="px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white text-base min-h-[44px]"
+                >
+                  <option value="ml">ml</option>
+                  <option value="litre">litre</option>
+                </select>
+              )}
               <input
                 type="number"
                 step="0.1"
@@ -391,9 +461,11 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
                 placeholder={
                   selectedFoodObj?.name === 'Oil (any)' 
                     ? `Quantity (${selectedUnit || 'tsp'})` 
-                    : selectedFoodObj?.unit === 'g' 
-                      ? 'Quantity (g)' 
-                      : `Quantity (${selectedFoodObj?.unit || 'g'})`
+                    : selectedFoodObj?.name === 'Milk (whole)'
+                      ? `Quantity (${selectedUnit || 'ml'})`
+                      : selectedFoodObj?.unit === 'g' 
+                        ? 'Quantity (g)' 
+                        : `Quantity (${selectedFoodObj?.unit || 'g'})`
                 }
                 required
                 className="w-32 sm:w-32 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white text-base min-h-[44px]"
@@ -426,7 +498,7 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
                     <div className="text-sm text-gray-600">
                       {(() => {
                         // Debug: Log entry data if unitSize is missing (only in development)
-                        if (process.env.NODE_ENV === 'development' && entry.food.unit !== 'g' && !entry.food.unitSize && entry.food.name !== 'Oil (any)' && !entry.food.caloriesPerPiece) {
+                        if (process.env.NODE_ENV === 'development' && entry.food.unit !== 'g' && !entry.food.unitSize && entry.food.name !== 'Oil (any)' && entry.food.name !== 'Milk (whole)' && !entry.food.caloriesPerPiece) {
                           console.log('Food entry debug - missing unitSize:', {
                             name: entry.food.name,
                             unit: entry.food.unit,
@@ -463,6 +535,33 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
                           const carbs = (entry.food.carbsPer100g || 0) * (entry.quantity / 100);
                           const fats = (entry.food.fatsPer100g || 0) * (entry.quantity / 100);
                           return `${units.toFixed(1)} ${unit}(s) • ${Math.round(calories)} cal • P: ${protein.toFixed(1)}g • C: ${carbs.toFixed(1)}g • F: ${fats.toFixed(1)}g`;
+                        }
+                        
+                        // Special handling for Milk - can be ml or litre
+                        if (entry.food.name === 'Milk (whole)') {
+                          // Determine if it was litre (1000ml) or ml based on quantity
+                          // If >= 1000 and divisible by 1000, prefer litre; otherwise ml
+                          const isLitre = entry.quantity >= 1000 && entry.quantity % 1000 === 0;
+                          
+                          let unit: 'ml' | 'litre';
+                          let unitSize: number;
+                          let units: number;
+                          
+                          if (isLitre) {
+                            unit = 'litre';
+                            unitSize = 1000;
+                            units = entry.quantity / 1000;
+                          } else {
+                            unit = 'ml';
+                            unitSize = 1;
+                            units = entry.quantity;
+                          }
+                          
+                          const calories = (entry.food.caloriesPer100g || 0) * (entry.quantity / 100);
+                          const protein = (entry.food.proteinPer100g || 0) * (entry.quantity / 100);
+                          const carbs = (entry.food.carbsPer100g || 0) * (entry.quantity / 100);
+                          const fats = (entry.food.fatsPer100g || 0) * (entry.quantity / 100);
+                          return `${units.toFixed(1)} ${unit} • ${Math.round(calories)} cal • P: ${protein.toFixed(1)}g • C: ${carbs.toFixed(1)}g • F: ${fats.toFixed(1)}g`;
                         }
                         
                         // Priority 1: Foods with unitSize (custom foods, tsp, tbsp, slice, piece with unitSize, etc.)

@@ -202,6 +202,15 @@
     "notes": "1 piece of idli"
   },
   {
+    "name": "Sooji Idli",
+    "unit": "piece",
+    "caloriesPerPiece": 58,
+    "proteinPerPiece": 2,
+    "carbsPerPiece": 11,
+    "fatsPerPiece": 0.8,
+    "notes": "1 piece of sooji idli (semolina idli)"
+  },
+  {
     "name": "Dosa",
     "unit": "piece",
     "caloriesPerPiece": 135,
@@ -259,5 +268,55 @@
     "unit": "slice",
     "unitSize": 27,
     "notes": "2 slices = 54g (146 kcal, 12.8g protein, 17.6g carbs, 2.7g fat)"
+  },
+  {
+    "name": "Pintola High Protein Oats (Chocolate)",
+    "caloriesPer100g": 392,
+    "proteinPer100g": 25,
+    "carbsPer100g": 54.6,
+    "fatsPer100g": 8,
+    "unit": "g",
+    "unitSize": 100,
+    "notes": "Pintola High Protein Oats - Chocolate flavor, 400g package. Contains super seeds, almonds, raisins, whey protein. Gluten free, 0% refined sugar, sweetened with organic jaggery"
+  },
+  {
+    "name": "Moong Dal (cooked)",
+    "caloriesPer100g": 105,
+    "proteinPer100g": 6,
+    "carbsPer100g": 18,
+    "fatsPer100g": 2,
+    "unit": "katori",
+    "unitSize": 125,
+    "notes": "1 katori = 125g cooked moong dal (~131 kcal, 7.5g protein, 22.5g carbs, 2.5g fat)"
+  },
+  {
+    "name": "Masoor Dal (cooked)",
+    "caloriesPer100g": 95,
+    "proteinPer100g": 6.5,
+    "carbsPer100g": 17,
+    "fatsPer100g": 0.5,
+    "unit": "katori",
+    "unitSize": 125,
+    "notes": "1 katori = 125g cooked masoor dal (~119 kcal, 8.1g protein, 21.3g carbs, 0.6g fat)"
+  },
+  {
+    "name": "Gobhi Aloo Sabzi",
+    "caloriesPer100g": 90,
+    "proteinPer100g": 2.5,
+    "carbsPer100g": 15,
+    "fatsPer100g": 3,
+    "unit": "katori",
+    "unitSize": 125,
+    "notes": "1 katori = 125g gobhi aloo sabzi (~113 kcal, 3.1g protein, 18.8g carbs, 3.8g fat)"
+  },
+  {
+    "name": "Milk (whole)",
+    "caloriesPer100g": 61,
+    "proteinPer100g": 3.2,
+    "carbsPer100g": 4.8,
+    "fatsPer100g": 3.3,
+    "unit": "ml",
+    "unitSize": 100,
+    "notes": "Whole milk - 1 litre = 1000ml (610 kcal, 32g protein, 48g carbs, 33g fat)"
   }
 ]
