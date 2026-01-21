@@ -193,15 +193,6 @@
     "notes": "Medium sized paratha, mediumly oiled on tawa"
   },
   {
-    "name": "Idli",
-    "unit": "piece",
-    "caloriesPerPiece": 35,
-    "proteinPerPiece": 1.5,
-    "carbsPerPiece": 7,
-    "fatsPerPiece": 0.1,
-    "notes": "1 piece of idli"
-  },
-  {
     "name": "Sooji Idli",
     "unit": "piece",
     "caloriesPerPiece": 58,
@@ -318,5 +309,15 @@
     "unit": "ml",
     "unitSize": 100,
     "notes": "Whole milk - 1 litre = 1000ml (610 kcal, 32g protein, 48g carbs, 33g fat)"
+  },
+  {
+    "name": "Hari Dal Chilka",
+    "caloriesPer100g": 108,
+    "proteinPer100g": 7.5,
+    "carbsPer100g": 19,
+    "fatsPer100g": 0.6,
+    "unit": "g",
+    "unitSize": 125,
+    "notes": "Green gram dal with skin (sabut moong) - cooked. 1 katori = 125g (~135 kcal, 9.4g protein, 23.8g carbs, 0.8g fat)"
   }
 ]

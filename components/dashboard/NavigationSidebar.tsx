@@ -10,6 +10,7 @@ export default function NavigationSidebar() {
 
   const navItems = [
     { href: '/dashboard', label: 'Dashboard', icon: '📊' },
+    { href: '/dashboard/progress', label: 'Weekly Progress', icon: '📅' },
     { href: '/dashboard/calculations', label: 'Calculations', icon: '🔢' },
     { href: '/dashboard/settings', label: 'Settings', icon: '⚙️' },
   ];

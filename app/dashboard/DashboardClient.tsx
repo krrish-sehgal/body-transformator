@@ -9,6 +9,7 @@ import NavigationSidebar from '@/components/dashboard/NavigationSidebar';
 import CalendarModal from '@/components/dashboard/CalendarModal';
 import AddCustomFoodModal from '@/components/dashboard/AddCustomFoodModal';
 import { format } from 'date-fns';
+import jsPDF from 'jspdf';
 
 interface DashboardClientProps {
   profile: any;
@@ -30,7 +31,7 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
   const [selectedFood, setSelectedFood] = useState('');
   const [selectedFoodObj, setSelectedFoodObj] = useState<any>(null);
   const [quantity, setQuantity] = useState('');
-  const [selectedUnit, setSelectedUnit] = useState<'tsp' | 'tbsp' | 'ml' | 'litre' | null>(null); // For oil and milk unit switching
+  const [selectedUnit, setSelectedUnit] = useState<'tsp' | 'tbsp' | 'ml' | 'litre' | 'g' | 'katori' | null>(null); // For oil, milk, and hari dal chilka unit switching
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -97,6 +98,8 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
       setSelectedUnit('tsp'); // Default to tsp
     } else if (food?.name === 'Milk (whole)') {
       setSelectedUnit('ml'); // Default to ml
+    } else if (food?.name === 'Hari Dal Chilka') {
+      setSelectedUnit('katori'); // Default to katori
     } else {
       setSelectedUnit(null);
     }
@@ -135,6 +138,14 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
         quantityToStore = parseFloat(quantity) * 1000; // Convert litre to ml (grams)
       } else {
         quantityToStore = parseFloat(quantity); // ml is same as grams for milk
+      }
+    } else if (selectedFoodObj.name === 'Hari Dal Chilka') {
+      // Special handling for hari dal chilka - use selected unit (g or katori)
+      // 1 katori = 125g
+      if (selectedUnit === 'katori') {
+        quantityToStore = parseFloat(quantity) * 125; // Convert katori to grams
+      } else {
+        quantityToStore = parseFloat(quantity); // Already in grams
       }
     } else if (selectedFoodObj.unit === 'piece' && selectedFoodObj.caloriesPerPiece && !selectedFoodObj.unitSize) {
       // Piece-based foods with per-piece values (eggs, cookies, roti) - store piece count directly
@@ -212,6 +223,154 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
     router.refresh();
   };
 
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+    let yPosition = 20;
+    const pageHeight = doc.internal.pageSize.height;
+    const margin = 20;
+    const maxWidth = doc.internal.pageSize.width - (margin * 2);
+    
+    // Helper function to add new page if needed
+    const checkNewPage = (spaceNeeded: number = 30) => {
+      if (yPosition + spaceNeeded > pageHeight - margin) {
+        doc.addPage();
+        yPosition = 20;
+        return true;
+      }
+      return false;
+    };
+    
+    // Title
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Daily Nutrition Report', margin, yPosition);
+    yPosition += 10;
+    
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Date: ${format(new Date(currentDateStr), 'MMMM dd, yyyy')}`, margin, yPosition);
+    yPosition += 15;
+    
+    // Goals Section
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Recomp Goals', margin, yPosition);
+    yPosition += 8;
+    
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Macro-defined Calories: ${targets.recompCalories} kcal`, margin, yPosition);
+    yPosition += 6;
+    doc.text(`Expected Intake Range: ${targets.recompCalories + recompConfig.recomp.intakeBufferMin} - ${targets.recompCalories + recompConfig.recomp.intakeBufferMax} kcal`, margin, yPosition);
+    yPosition += 6;
+    doc.text(`Upper Bound: ${targets.maintenance - recompConfig.recomp.subtractValue} kcal`, margin, yPosition);
+    yPosition += 6;
+    doc.text(`Maintenance: ${targets.maintenance} kcal`, margin, yPosition);
+    yPosition += 6;
+    doc.text(`Effective Deficit: ${effectiveDeficit} kcal (${effectiveDeficitPercent}%)`, margin, yPosition);
+    yPosition += 10;
+    
+    // Macro Targets
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Macro Targets', margin, yPosition);
+    yPosition += 8;
+    
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Protein: ${targets.protein} g`, margin, yPosition);
+    yPosition += 6;
+    doc.text(`Carbs: ${targets.carbs} g`, margin, yPosition);
+    yPosition += 6;
+    doc.text(`Fats: ${targets.fats} g`, margin, yPosition);
+    yPosition += 15;
+    
+    // Progress Section
+    checkNewPage();
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Daily Progress', margin, yPosition);
+    yPosition += 8;
+    
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Calories: ${todayTotals.calories} / ${targets.recompCalories} kcal (${Math.round(progress.calories)}%)`, margin, yPosition);
+    yPosition += 6;
+    doc.text(`Protein: ${todayTotals.protein.toFixed(1)} / ${targets.protein} g (${Math.round(progress.protein)}%)`, margin, yPosition);
+    yPosition += 6;
+    doc.text(`Carbs: ${todayTotals.carbs.toFixed(1)} / ${targets.carbs} g (${Math.round(progress.carbs)}%)`, margin, yPosition);
+    yPosition += 6;
+    doc.text(`Fats: ${todayTotals.fats.toFixed(1)} / ${targets.fats} g (${Math.round(progress.fats)}%)`, margin, yPosition);
+    yPosition += 15;
+    
+    // Food Entries Section
+    if (dailyLog && dailyLog.entries.length > 0) {
+      checkNewPage();
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Food Entries', margin, yPosition);
+      yPosition += 10;
+      
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      
+      dailyLog.entries.forEach((entry: any) => {
+        checkNewPage(25);
+        
+        // Calculate nutrition info
+        const calories = entry.food.caloriesPerPiece 
+          ? entry.food.caloriesPerPiece * entry.quantity
+          : (entry.food.caloriesPer100g * entry.quantity) / 100;
+        const protein = entry.food.proteinPerPiece 
+          ? entry.food.proteinPerPiece * entry.quantity
+          : (entry.food.proteinPer100g * entry.quantity) / 100;
+        const carbs = entry.food.carbsPerPiece 
+          ? entry.food.carbsPerPiece * entry.quantity
+          : (entry.food.carbsPer100g * entry.quantity) / 100;
+        const fats = entry.food.fatsPerPiece 
+          ? entry.food.fatsPerPiece * entry.quantity
+          : (entry.food.fatsPer100g * entry.quantity) / 100;
+        
+        // Format quantity display
+        let quantityDisplay = '';
+        if (entry.food.name === 'Oil (any)') {
+          const isTbsp = entry.quantity >= 15 && entry.quantity % 15 === 0;
+          const units = isTbsp ? entry.quantity / 15 : entry.quantity / 5;
+          quantityDisplay = `${units.toFixed(1)} ${isTbsp ? 'tbsp' : 'tsp'}`;
+        } else if (entry.food.name === 'Milk (whole)') {
+          const isLitre = entry.quantity >= 1000 && entry.quantity % 1000 === 0;
+          const units = isLitre ? entry.quantity / 1000 : entry.quantity;
+          quantityDisplay = `${units.toFixed(1)} ${isLitre ? 'litre' : 'ml'}`;
+        } else if (entry.food.unitSize && entry.food.unit !== 'g') {
+          const units = entry.quantity / entry.food.unitSize;
+          quantityDisplay = `${units.toFixed(1)} ${entry.food.unit}(s)`;
+        } else if (entry.food.unit === 'piece' && entry.food.caloriesPerPiece) {
+          quantityDisplay = `${entry.quantity} piece(s)`;
+        } else {
+          quantityDisplay = `${entry.quantity}g`;
+        }
+        
+        doc.setFont('helvetica', 'bold');
+        const foodName = doc.splitTextToSize(entry.food.name, maxWidth);
+        doc.text(foodName, margin, yPosition);
+        yPosition += foodName.length * 5 + 2;
+        
+        doc.setFont('helvetica', 'normal');
+        const details = `  ${quantityDisplay} • ${Math.round(calories)} cal • P: ${protein.toFixed(1)}g • C: ${carbs.toFixed(1)}g • F: ${fats.toFixed(1)}g`;
+        doc.text(details, margin + 5, yPosition);
+        yPosition += 8;
+      });
+    } else {
+      checkNewPage();
+      doc.setFontSize(11);
+      doc.text('No food entries for this day.', margin, yPosition);
+    }
+    
+    // Save the PDF
+    const fileName = `nutrition-report-${currentDateStr}.pdf`;
+    doc.save(fileName);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 py-4 sm:py-8 px-4 sm:px-6 relative">
       {/* Navigation Sidebar */}
@@ -241,6 +400,12 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8 gap-4">
           <h1 className="text-3xl sm:text-3xl font-bold text-gray-900">Dashboard</h1>
           <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+            <button
+              onClick={handleExportPDF}
+              className="px-5 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 flex items-center gap-2 text-base font-medium min-h-[44px]"
+            >
+              📥 <span className="hidden sm:inline">Export PDF</span>
+            </button>
             {currentDateStr !== clientToday && (
               <button
                 onClick={goToToday}
@@ -453,6 +618,20 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
                   <option value="litre">litre</option>
                 </select>
               )}
+              {/* Unit selector for Hari Dal Chilka */}
+              {selectedFoodObj?.name === 'Hari Dal Chilka' && (
+                <select
+                  value={selectedUnit || 'katori'}
+                  onChange={(e) => {
+                    setSelectedUnit(e.target.value as 'g' | 'katori');
+                    setQuantity(''); // Reset quantity when unit changes
+                  }}
+                  className="px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white text-base min-h-[44px]"
+                >
+                  <option value="katori">katori</option>
+                  <option value="g">g</option>
+                </select>
+              )}
               <input
                 type="number"
                 step="0.1"
@@ -463,9 +642,11 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
                     ? `Quantity (${selectedUnit || 'tsp'})` 
                     : selectedFoodObj?.name === 'Milk (whole)'
                       ? `Quantity (${selectedUnit || 'ml'})`
-                      : selectedFoodObj?.unit === 'g' 
-                        ? 'Quantity (g)' 
-                        : `Quantity (${selectedFoodObj?.unit || 'g'})`
+                      : selectedFoodObj?.name === 'Hari Dal Chilka'
+                        ? `Quantity (${selectedUnit || 'katori'})`
+                        : selectedFoodObj?.unit === 'g' 
+                          ? 'Quantity (g)' 
+                          : `Quantity (${selectedFoodObj?.unit || 'g'})`
                 }
                 required
                 className="w-32 sm:w-32 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white text-base min-h-[44px]"
@@ -498,7 +679,7 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
                     <div className="text-sm text-gray-600">
                       {(() => {
                         // Debug: Log entry data if unitSize is missing (only in development)
-                        if (process.env.NODE_ENV === 'development' && entry.food.unit !== 'g' && !entry.food.unitSize && entry.food.name !== 'Oil (any)' && entry.food.name !== 'Milk (whole)' && !entry.food.caloriesPerPiece) {
+                        if (process.env.NODE_ENV === 'development' && entry.food.unit !== 'g' && !entry.food.unitSize && entry.food.name !== 'Oil (any)' && entry.food.name !== 'Milk (whole)' && entry.food.name !== 'Hari Dal Chilka' && !entry.food.caloriesPerPiece) {
                           console.log('Food entry debug - missing unitSize:', {
                             name: entry.food.name,
                             unit: entry.food.unit,
@@ -553,6 +734,33 @@ export default function DashboardClient({ profile, dailyLog, foods, userId, allD
                             units = entry.quantity / 1000;
                           } else {
                             unit = 'ml';
+                            unitSize = 1;
+                            units = entry.quantity;
+                          }
+                          
+                          const calories = (entry.food.caloriesPer100g || 0) * (entry.quantity / 100);
+                          const protein = (entry.food.proteinPer100g || 0) * (entry.quantity / 100);
+                          const carbs = (entry.food.carbsPer100g || 0) * (entry.quantity / 100);
+                          const fats = (entry.food.fatsPer100g || 0) * (entry.quantity / 100);
+                          return `${units.toFixed(1)} ${unit} • ${Math.round(calories)} cal • P: ${protein.toFixed(1)}g • C: ${carbs.toFixed(1)}g • F: ${fats.toFixed(1)}g`;
+                        }
+                        
+                        // Special handling for Hari Dal Chilka - can be g or katori
+                        if (entry.food.name === 'Hari Dal Chilka') {
+                          // Determine if it was katori (125g) or g based on quantity
+                          // If >= 125 and divisible by 125, prefer katori; otherwise g
+                          const isKatori = entry.quantity >= 125 && entry.quantity % 125 === 0;
+                          
+                          let unit: 'g' | 'katori';
+                          let unitSize: number;
+                          let units: number;
+                          
+                          if (isKatori) {
+                            unit = 'katori';
+                            unitSize = 125;
+                            units = entry.quantity / 125;
+                          } else {
+                            unit = 'g';
                             unitSize = 1;
                             units = entry.quantity;
                           }
